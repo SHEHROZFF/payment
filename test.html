@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 400px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .product-card {
+            margin-bottom: 20px;
+        }
+        .product-card img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+        .product-details {
+            margin-top: 10px;
+        }
+        .product-details h3 {
+            margin: 10px 0;
+            font-size: 1.5em;
+        }
+        .product-details p {
+            font-size: 1.2em;
+            color: #666;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+        #click-to-pay-button {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="product-card">
+            <img src="https://via.placeholder.com/350x150" alt="Product Image">
+            <div class="product-details">
+                <h3>Product Name</h3>
+                <p>$100.00</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <button id="add-to-cart">Add to Cart</button>
+        </div>
+        <div id="click-to-pay-button"></div>
+    </div>
+
+    <script src="https://src.mastercard.com/srci/integration/2/lib.js?srcDpaId=01b2280e-6d56-4226-a5c7-a84dce0cd8f3&locale=en_US"></script>
+    <script>
+        var params = {
+            srcDpaId: "01b2280e-6d56-4226-a5c7-a84dce0cd8f3", // required
+            checkoutExperience: "WITHIN_CHECKOUT",
+            dpaData: { 
+                dpaName: "YourDpaName" // required
+            },
+            dpaTransactionOptions: {
+                consumerEmailAddressRequested: true,
+                consumerPhoneNumberRequested: true,
+                dpaBillingPreference: "FULL",
+                dpaLocale: "en_US",
+                paymentOptions: [
+                    {
+                        dynamicDataType: "CARD_APPLICATION_CRYPTOGRAM_SHORT_FORM"
+                    }
+                ],
+                transactionAmount: {
+                    transactionAmount: 100, // Amount in smallest currency unit (e.g., cents for USD)
+                    transactionCurrencyCode: "USD"
+                }
+            },
+            cardBrands: ["mastercard"] // required, can add more card brands like visa, amex, etc.
+        };
+
+        var mcCheckoutService = new MastercardCheckoutServices();
+
+        async function initializeMastercardCheckoutServices() {
+            try {
+                var result = await mcCheckoutService.init(params);
+                console.log(result);
+                renderClickToPayButton(result);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        function renderClickToPayButton(cards) {
+            if (cards.length > 0) {
+                mcCheckoutService.renderButton({
+                    buttonId: 'click-to-pay-button',
+                    merchantName: 'Your Merchant Name',
+                    transactionAmount: params.dpaTransactionOptions.transactionAmount.transactionAmount,
+                    transactionCurrencyCode: params.dpaTransactionOptions.transactionAmount.transactionCurrencyCode
+                });
+            } else {
+                document.getElementById('click-to-pay-button').innerText = 'No eligible cards available for Click to Pay.';
+            }
+        }
+
+        document.getElementById('add-to-cart').addEventListener('click', function() {
+            initializeMastercardCheckoutServices();
+        });
+
+    </script>
+</body>
+</html>
