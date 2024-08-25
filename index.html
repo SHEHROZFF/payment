@@ -77,7 +77,8 @@
     </div>
     <src-button card-brands ="mastercard"></src-button>
 
-    <script src="https://sandbox.src.mastercard.com/srci/integration/2/lib.js?srcDpaId=01b2280e-6d56-4226-a5c7-a84dce0cd8f3&locale=en_US"></script>
+    <script src="https://sandbox.src.mastercard.com/srci/integration/2/lib.js?srcDpaId=b756a2b0-ef62-4c62-a6de-f72e75ce5f17&locale=en_US"></script>
+    
     <script>
         var mcCheckoutService = new MastercardCheckoutServices();
         async function initializeMastercardCheckoutServices() {
@@ -86,98 +87,110 @@
                 
                 var result = await mcCheckoutService.init(
                     {
-                        srcDpaId: "01b2280e-6d56-4226-a5c7-a84dce0cd8f3", // required
-                        checkoutExperience: "WITHIN_CHECKOUT",
-                        dpaData: { 
-                            dpaName: "YourDpaName" // required
+                        "srcDpaId": "b756a2b0-ef62-4c62-a6de-f72e75ce5f17", // required
+                        "checkoutExperience":"WITHIN_CHECKOUT",
+                        "dpaData": { // required
+                            "dpaName": "Registered DPA Name"
                         },
-                        dpaTransactionOptions: {
-                            consumerEmailAddressRequested: true,
-                            consumerPhoneNumberRequested: true,
-                            dpaBillingPreference: "FULL",
-                            dpaLocale: "en_US",
-                            paymentOptions: [
-                                {
-                                    dynamicDataType: "CARD_APPLICATION_CRYPTOGRAM_SHORT_FORM"
-                                }
-                            ],
-                            transactionAmount: {
-                                transactionAmount: 100, // Amount in smallest currency unit (e.g., cents for USD)
-                                transactionCurrencyCode: "USD"
-                            }
+                        "dpaTransactionOptions": {
+                        "consumerEmailAddressRequested": true,
+                        "consumerPhoneNumberRequested": true,
+                        "dpaBillingPreference": "FULL",
+                        "dpaLocale": "en_US",
+                        "paymentOptions": [
+                        {
+                            "dynamicDataType": "CARD_APPLICATION_CRYPTOGRAM_SHORT_FORM"
+                        }
+                        ],
+                        "transactionAmount": {
+                        "transactionAmount": 100,
+                        "transactionCurrencyCode": "USD"
+                        }
                         },
-                        cardBrands: ["mastercard"] // required, can add more card brands like visa, amex, etc.
+                        "cardBrands": [ // required
+                            "mastercard",
+                            "maestro",
+                            "visa",
+                            "amex",
+                            "discover"
+                        ],
                     }
+
                 );
+                console.log("1",result);
+                
 
                 var result2 = await mcCheckoutService.encryptCard(
                     {  
-                        primaryAccountNumber: "5555500830030331",
-                        panExpirationMonth: "11",
-                        panExpirationYear: "25",
-                        cardSecurityCode: "123",
-                        cardholderFirstName: "Jane",
-                        cardholderLastName: "Doe",
-                        billingAddress: {
-                            name: "Jane Doe",
-                            line1: "Street 1",
-                            line2: "string",
-                            line3: "string",
-                            city: "New York",
-                            state: "NY",
-                            zip: "10009",
-                            countryCode: "US"
+                        "primaryAccountNumber": "5204731600012796",
+                        "panExpirationMonth": "11",
+                        "panExpirationYear": "25",
+                        "cardSecurityCode": "123",
+                        "cardholderFirstName": "Jane",
+                        "cardholderLastName": "Doe",
+                        "billingAddress": {
+                            "name": "Jane Doe",
+                            "line1": "Street 1",
+                            "line2": "string",
+                            "line3": "string",
+                            "city": "New York",
+                            "state": "NY",
+                            "zip": "10009",
+                            "countryCode": "US"
                         }
-                        }
+                    }
                 );
-
                 
-                // var result3 = await mcCheckoutService.checkoutWithNewCard(
-                //     {
-                //         windowRef: window,
-                //         encryptedCard: result2.encryptedCard,
-                //         cardBrand: "mastercard",
-                //         rememberMe: "true",
-                //         consumer: {
-                //             emailAddress: "test.user@test.com",
-                //             mobileNumber: {
-                //             phoneNumber: "3470000000",
-                //             countryCode: "1"
-                //             },
-                //         firstName: "Test",
-                //         lastName: "User"  
-                //         },
-                //         dpaTransactionOptions: {
-                //             transactionAmount: {
-                //             transactionAmount: 100,
-                //             transactionCurrencyCode: "USD"
-                //             },
-                //             dpaBillingPreference: "FULL",
-                //             dpaAcceptedBillingCountries: [],
-                //             consumerEmailAddressRequested: true,
-                //             consumerPhoneNumberRequested: true,
-                //             merchantCategoryCode: "0000",
-                //             merchantCountryCode: "PK",
-                //             merchantOrderId: "506610rt-6858-4147-9ec2-b030f1337a7d",
-                //             threeDsPreference:"NONE",
-                //             dpaLocale: "en_US",
-                //             acquirerMerchantId: "550e8400",
-                //             acquirerBin: "44444",
-                //             paymentOptions: [
-                //             {
-                //                 dynamicDataType: "CARD_APPLICATION_CRYPTOGRAM_SHORT_FORM"
-                //             },
-                //             ],
-                //             authenticationPreferences: {
-                //             payloadRequested: "AUTHENTICATED"
-                //             },
-                //         }
-                //         }
-                // )
-
-                console.log(result2);
-                // console.log(result3);
+                console.log("2",result2);
+                console.log(Window);
                 
+                
+                var result3 = await mcCheckoutService.checkoutWithNewCard(
+                    {
+                        "windowRef": window,
+                        "encryptedCard": result2.encryptedCard,
+                        "cardBrand": "mastercard",
+                        "rememberMe": "true",
+                        "consumer": {
+                            "emailAddress": "test.user@test.com",
+                            "mobileNumber": {
+                            "phoneNumber": "3470000000",
+                            "countryCode": "1"
+                            },
+                        "firstName": "Test",
+                        "lastName": "User"  
+                        },
+                        "dpaTransactionOptions": {
+                            "transactionAmount": {
+                            "transactionAmount": 100,
+                            "transactionCurrencyCode": "USD"
+                            },
+                            "dpaBillingPreference": "FULL",
+                            "dpaAcceptedBillingCountries": [],
+                            "consumerEmailAddressRequested": true,
+                            "consumerPhoneNumberRequested": true,
+                            // "merchantCategoryCode": "0000",
+                            // "merchantCountryCode": "US",
+                            // "merchantOrderId": "506610rt-6858-4147-9ec2-b030f1337a7d",
+                            // "threeDsPreference":"NONE",
+                            // "dpaLocale": "en_US",
+                            // "acquirerMerchantId": "550e8400",
+                            // "acquirerBin": "44444",
+                            "paymentOptions": [
+                            {
+                                "dynamicDataType": "CARD_APPLICATION_CRYPTOGRAM_SHORT_FORM"
+                            },
+                            ],
+                            "authenticationPreferences": {
+                            "payloadRequested": "AUTHENTICATED"
+                            },
+                        }
+                        }
+                )
+                console.log("3",result3);
+                alert("Result 3: " + JSON.stringify(result3));
+                
+
                 // renderClickToPayButton(result);
             } catch (error) {
                 console.log(error);
