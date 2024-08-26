@@ -71,7 +71,7 @@
         <div class="product-card">
             <img src="https://via.placeholder.com/350x150" alt="Product Image">
             <div class="product-details">
-                <h3>Product Name</h3>
+                <h3>Total Price</h3>
                 <p>$100.00</p>
             </div>
         </div>
@@ -91,39 +91,40 @@
         </div>
         <div class="form-group">
             <!-- <button id="click-to-pay">Click to Pay</button> -->
-            <src-button id="click-to-pay" card-brands="mastercard"></src-button>
+            <src-button id="click-to-pay" card-brands="mastercard,visa"></src-button>
 
         </div>
     </div>
     <script type="module" src="https://src.mastercard.com/srci/integration/components/src-ui-kit/src-ui-kit.esm.js"></script>
-    <!-- Mastercard Click to Pay library -->
     <script src="https://sandbox.src.mastercard.com/srci/integration/2/lib.js?srcDpaId=01b2280e-6d56-4226-a5c7-a84dce0cd8f3&locale=en_US"></script>
-
 
     <script>
         var isFirstTimeUser = true; // This should be dynamically determined based on your logic
         
-        // Listen for messages from the Mastercard iframe
-        window.addEventListener("message", function(event) {
-            if (event.origin !== "https://sandbox.src.mastercard.com") {
-                return;
-            }
+        // // Listen for messages from the Mastercard iframe
+        // window.addEventListener("message", function(event) {
+        //     if (event.origin !== "https://sandbox.src.mastercard.com") {
+        //         return;
+        //     }
 
-            switch(event.data.message) {
-                case "READY":
-                    console.log("Mastercard iframe is ready");
-                    // Handle any additional actions when the iframe is ready
-                    break;
-                default:
-                    console.log("Unknown message received:", event.data.message);
-            }
-        });
+        //     switch(event.data.message) {
+        //         case "READY":
+        //             console.log("Mastercard iframe is ready");
+        //             // Handle any additional actions when the iframe is ready
+        //             break;
+        //         default:
+        //             console.log("Unknown message received:", event.data.message);
+        //     }
+        // });
 
         // Initialize Mastercard Click to Pay
         var mcCheckoutService = new MastercardCheckoutServices();
 
         async function initializeMastercardCheckoutServices() {
             try {
+                var checkCards= await mcCheckoutService.getCards()
+                console.log("chehkha",checkCards);
+                
                 var result = await mcCheckoutService.init({
                     "srcDpaId": "01b2280e-6d56-4226-a5c7-a84dce0cd8f3",
                     "checkoutExperience":"WITHIN_CHECKOUT",
@@ -147,6 +148,7 @@
                     },
                     "cardBrands": [
                         "mastercard",
+                        "visa"
                     ],
                 });
                 
