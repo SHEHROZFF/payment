@@ -77,7 +77,7 @@
     </div>
     <src-button card-brands ="mastercard"></src-button>
 
-    <script src="https://sandbox.src.mastercard.com/srci/integration/2/lib.js?srcDpaId=b756a2b0-ef62-4c62-a6de-f72e75ce5f17&locale=en_US"></script>
+    <script src="https://sandbox.src.mastercard.com/srci/integration/2/lib.js?srcDpaId=01b2280e-6d56-4226-a5c7-a84dce0cd8f3&locale=en_US"></script>
     
     <script>
         var mcCheckoutService = new MastercardCheckoutServices();
@@ -87,7 +87,7 @@
                 
                 var result = await mcCheckoutService.init(
                     {
-                        "srcDpaId": "b756a2b0-ef62-4c62-a6de-f72e75ce5f17", // required
+                        "srcDpaId": "01b2280e-6d56-4226-a5c7-a84dce0cd8f3", // required
                         "checkoutExperience":"WITHIN_CHECKOUT",
                         "dpaData": { // required
                             "dpaName": "Registered DPA Name"
@@ -109,10 +109,10 @@
                         },
                         "cardBrands": [ // required
                             "mastercard",
-                            "maestro",
-                            "visa",
-                            "amex",
-                            "discover"
+                            // "maestro",
+                            // "visa",
+                            // "amex",
+                            // "discover"
                         ],
                     }
 
@@ -142,7 +142,7 @@
                 );
                 
                 console.log("2",result2);
-                console.log(Window);
+                // console.log(Window);
                 
                 
                 var result3 = await mcCheckoutService.checkoutWithNewCard(
@@ -169,13 +169,13 @@
                             "dpaAcceptedBillingCountries": [],
                             "consumerEmailAddressRequested": true,
                             "consumerPhoneNumberRequested": true,
-                            // "merchantCategoryCode": "0000",
-                            // "merchantCountryCode": "US",
+                            "dpaLocale": "en_US",
+                            "merchantCategoryCode": "0000",
+                            "merchantCountryCode": "US",
                             // "merchantOrderId": "506610rt-6858-4147-9ec2-b030f1337a7d",
-                            // "threeDsPreference":"NONE",
-                            // "dpaLocale": "en_US",
-                            // "acquirerMerchantId": "550e8400",
-                            // "acquirerBin": "44444",
+                            "threeDsPreference":"NONE",
+                            "acquirerMerchantId": "550e8400",
+                            "acquirerBin": "1157111",
                             "paymentOptions": [
                             {
                                 "dynamicDataType": "CARD_APPLICATION_CRYPTOGRAM_SHORT_FORM"
