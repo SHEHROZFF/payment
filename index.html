@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src https://*; child-src 'none';" /> -->
     <title>Product Page</title>
     <style>
         body {
@@ -59,6 +58,10 @@
         #click-to-pay-button {
             margin-top: 20px;
         }
+        #card-details-form {
+            display: none;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -70,136 +73,147 @@
                 <p>$100.00</p>
             </div>
         </div>
-        <div class="form-group">
-            <button id="add-to-cart">Add to Cart</button>
+        <div id="card-details-form">
+            <div class="form-group">
+                <input type="text" id="card-number" placeholder="Card Number" />
+            </div>
+            <div class="form-group">
+                <input type="text" id="expiration-month" placeholder="Expiration Month" />
+            </div>
+            <div class="form-group">
+                <input type="text" id="expiration-year" placeholder="Expiration Year" />
+            </div>
+            <div class="form-group">
+                <input type="text" id="security-code" placeholder="Security Code" />
+            </div>
         </div>
-        <div id="click-to-pay-button"></div>
+        <div class="form-group">
+            <button id="click-to-pay">Click to Pay</button>
+        </div>
     </div>
-    <src-button card-brands ="mastercard"></src-button>
-
-    <script src="https://sandbox.src.mastercard.com/srci/integration/2/lib.js?srcDpaId=01b2280e-6d56-4226-a5c7-a84dce0cd8f3&locale=en_US"></script>
     
+    <!-- Mastercard Click to Pay library -->
+    <script src="https://sandbox.src.mastercard.com/srci/integration/2/lib.js?srcDpaId=01b2280e-6d56-4226-a5c7-a84dce0cd8f3&locale=en_US"></script>
+
     <script>
+        var isFirstTimeUser = true; // This should be dynamically determined based on your logic
+        
+        // Listen for messages from the Mastercard iframe
+        window.addEventListener("message", function(event) {
+            if (event.origin !== "https://sandbox.src.mastercard.com") {
+                return;
+            }
+
+            switch(event.data.message) {
+                case "READY":
+                    console.log("Mastercard iframe is ready");
+                    // Handle any additional actions when the iframe is ready
+                    break;
+                default:
+                    console.log("Unknown message received:", event.data.message);
+            }
+        });
+
+        // Initialize Mastercard Click to Pay
         var mcCheckoutService = new MastercardCheckoutServices();
+
         async function initializeMastercardCheckoutServices() {
             try {
-                console.log("hdhgzsjkf",mcCheckoutService);
-                
-                var result = await mcCheckoutService.init(
-                    {
-                        "srcDpaId": "01b2280e-6d56-4226-a5c7-a84dce0cd8f3", // required
-                        "checkoutExperience":"WITHIN_CHECKOUT",
-                        "dpaData": { // required
-                            "dpaName": "Registered DPA Name"
-                        },
-                        "dpaTransactionOptions": {
+                var result = await mcCheckoutService.init({
+                    "srcDpaId": "01b2280e-6d56-4226-a5c7-a84dce0cd8f3",
+                    "checkoutExperience":"WITHIN_CHECKOUT",
+                    "dpaData": {
+                        "dpaName": "Registered DPA Name"
+                    },
+                    "dpaTransactionOptions": {
                         "consumerEmailAddressRequested": true,
                         "consumerPhoneNumberRequested": true,
                         "dpaBillingPreference": "FULL",
                         "dpaLocale": "en_US",
                         "paymentOptions": [
-                        {
-                            "dynamicDataType": "CARD_APPLICATION_CRYPTOGRAM_SHORT_FORM"
-                        }
+                            {
+                                "dynamicDataType": "CARD_APPLICATION_CRYPTOGRAM_SHORT_FORM"
+                            }
                         ],
                         "transactionAmount": {
-                        "transactionAmount": 100,
-                        "transactionCurrencyCode": "USD"
+                            "transactionAmount": 100,
+                            "transactionCurrencyCode": "USD"
                         }
-                        },
-                        "cardBrands": [ // required
-                            "mastercard",
-                            // "maestro",
-                            // "visa",
-                            // "amex",
-                            // "discover"
-                        ],
-                    }
+                    },
+                    "cardBrands": [
+                        "mastercard",
+                    ],
+                });
+                
+                console.log("Initialization Result:", result);
 
-                );
-                console.log("1",result);
-                
+                if (isFirstTimeUser) {
+                    // Show card details form for first-time users
+                    document.getElementById("card-details-form").style.display = "block";
+                }
 
-                var result2 = await mcCheckoutService.encryptCard(
-                    {  
-                        "primaryAccountNumber": "5204731600012796",
-                        "panExpirationMonth": "11",
-                        "panExpirationYear": "25",
-                        "cardSecurityCode": "123",
-                        "cardholderFirstName": "Jane",
-                        "cardholderLastName": "Doe",
-                        "billingAddress": {
-                            "name": "Jane Doe",
-                            "line1": "Street 1",
-                            "line2": "string",
-                            "line3": "string",
-                            "city": "New York",
-                            "state": "NY",
-                            "zip": "10009",
-                            "countryCode": "US"
-                        }
+                // Event listener for Click to Pay button
+                document.getElementById("click-to-pay").addEventListener("click", async function() {
+                    let encryptedCard;
+
+                    if (isFirstTimeUser) {
+                        // Encrypt card details dynamically
+                        encryptedCard = await mcCheckoutService.encryptCard({
+                            "primaryAccountNumber": document.getElementById("card-number").value,
+                            "panExpirationMonth": document.getElementById("expiration-month").value,
+                            "panExpirationYear": document.getElementById("expiration-year").value,
+                            "cardSecurityCode": document.getElementById("security-code").value,
+                            "cardholderFirstName": "Jane",
+                            "cardholderLastName": "Doe",
+                            "billingAddress": {
+                                "name": "Jane Doe",
+                                "line1": "Street 1",
+                                "line2": "string",
+                                "line3": "string",
+                                "city": "New York",
+                                "state": "NY",
+                                "zip": "10009",
+                                "countryCode": "US"
+                            }
+                        });
+                    } else {
+                        // Use pre-stored encrypted card data for returning users
+                        encryptedCard = { encryptedCard: "storedEncryptedCardData" }; // Replace with actual stored data
                     }
-                );
-                
-                console.log("2",result2);
-                // console.log(Window);
-                
-                
-                var result3 = await mcCheckoutService.checkoutWithNewCard(
-                    {
-                        "windowRef": window,
-                        "encryptedCard": result2.encryptedCard,
+                    
+                    console.log("Encrypted Card:", encryptedCard);
+
+                    var checkoutResult = await mcCheckoutService.checkoutWithNewCard({
+                        "windowRef": window.open("", "popupWindow", "width=480,height=600"), // Open in popup
+                        "encryptedCard": encryptedCard.encryptedCard,
                         "cardBrand": "mastercard",
                         "rememberMe": "true",
                         "consumer": {
                             "emailAddress": "test.user@test.com",
                             "mobileNumber": {
-                            "phoneNumber": "3470000000",
-                            "countryCode": "1"
+                                "phoneNumber": "3470000000",
+                                "countryCode": "1"
                             },
-                        "firstName": "Test",
-                        "lastName": "User"  
+                            "firstName": "Test",
+                            "lastName": "User"  
                         },
                         "dpaTransactionOptions": {
-                            "transactionAmount": {
-                            "transactionAmount": 100,
-                            "transactionCurrencyCode": "USD"
-                            },
-                            "dpaBillingPreference": "FULL",
-                            "dpaAcceptedBillingCountries": [],
-                            "consumerEmailAddressRequested": true,
-                            "consumerPhoneNumberRequested": true,
-                            "dpaLocale": "en_US",
-                            "merchantCategoryCode": "0000",
-                            "merchantCountryCode": "US",
-                            // "merchantOrderId": "506610rt-6858-4147-9ec2-b030f1337a7d",
-                            "threeDsPreference":"NONE",
-                            "acquirerMerchantId": "550e8400",
-                            // "acquirerBin": "1157111",
-                            "paymentOptions": [
-                            {
-                                "dynamicDataType": "CARD_APPLICATION_CRYPTOGRAM_SHORT_FORM"
-                            },
-                            ],
                             "authenticationPreferences": {
-                            "payloadRequested": "AUTHENTICATED"
+                                "payloadRequested": "AUTHENTICATED"
                             },
                         }
-                        }
-                )
-                console.log("3",result3);
-                alert("Result 3: " + JSON.stringify(result3));
-                
+                    });
+                    
+                    console.log("Checkout Result:", checkoutResult);
+                    alert("Checkout Result: " + JSON.stringify(checkoutResult));
+                });
 
-                // renderClickToPayButton(result);
             } catch (error) {
-                console.log(error);
+                console.error("Error during Mastercard Checkout initialization:", error);
             }
         }
 
-            initializeMastercardCheckoutServices();
-
-
+        initializeMastercardCheckoutServices();
     </script>
 </body>
 </html>
