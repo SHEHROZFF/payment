@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merchant API Frontend</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input, textarea {
+            display: block;
+            margin-bottom: 10px;
+            padding: 8px;
+            width: 100%;
+        }
+        button {
+            padding: 10px 15px;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .merchant-list, .product-list {
+            margin-top: 20px;
+        }
+        .product-item {
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .product-item img {
+            max-width: 100px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Merchant API Frontend</h1>
+
+    <h2>Create Merchant</h2>
+    <form id="create-merchant-form">
+        <input type="text" id="merchant-name" placeholder="Name" required>
+        <input type="email" id="merchant-email" placeholder="Email" required>
+        <input type="text" id="merchant-phone" placeholder="Phone" required>
+        <button type="submit">Create Merchant</button>
+    </form>
+
+    <h2>Add Product</h2>
+    <form id="add-product-form">
+        <input type="text" id="merchant-id" placeholder="Merchant ID" required>
+        <input type="text" id="product-name" placeholder="Product Name" required>
+        <textarea id="product-description" placeholder="Product Description" required></textarea>
+        <input type="number" id="product-price" placeholder="Product Price" required>
+        <input type="text" id="product-image" placeholder="Product Image URL" required>
+        <button type="submit">Add Product</button>
+    </form>
+
+    <h2>Merchant List</h2>
+    <button id="load-merchants">Load Merchants</button>
+    <div class="merchant-list" id="merchant-list"></div>
+
+    <h2>Product List</h2>
+    <button id="load-products">Load Products</button>
+    <div class="product-list" id="product-list"></div>
+
+    <script>
+        document.getElementById('create-merchant-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const name = document.getElementById('merchant-name').value;
+            const email = document.getElementById('merchant-email').value;
+            const phone = document.getElementById('merchant-phone').value;
+
+            const response = await fetch('/api/merchants', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, phone })
+            });
+
+            const result = await response.json();
+            alert(result.message);
+            document.getElementById('create-merchant-form').reset();
+        });
+
+        document.getElementById('add-product-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const merchantId = document.getElementById('merchant-id').value;
+            const name = document.getElementById('product-name').value;
+            const description = document.getElementById('product-description').value;
+            const price = parseFloat(document.getElementById('product-price').value);
+            const imageUrl = document.getElementById('product-image').value;
+
+            const response = await fetch(`/api/merchants/${merchantId}/products`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, description, price, imageUrl })
+            });
+
+            const result = await response.json();
+            alert(result.message);
+            document.getElementById('add-product-form').reset();
+        });
+
+        document.getElementById('load-merchants').addEventListener('click', async function() {
+            const response = await fetch('/api/merchants');
+            const merchants = await response.json();
+            const list = document.getElementById('merchant-list');
+            list.innerHTML = merchants.map(merchant => `
+                <div>
+                    ${merchant._id} <strong>${merchant.name}</strong> - ${merchant.email} - ${merchant.phone}
+                </div>
+            `).join('');
+        });
+
+        document.getElementById('load-products').addEventListener('click', async function() {
+            const response = await fetch('/api/products');
+            const result = await response.json();
+            console.log(result);
+            
+            const list = document.getElementById('product-list');
+            list.innerHTML = result.products.map(product => `
+                <div class="product-item">
+                    <strong>${product.name}</strong> - ${product.description} - $${product.price}- ${product.merchantId}
+                    <br>
+                    <img src="${product.imageUrl}" alt="${product.name}">
+                    <br>
+                    <button onclick="handlePay('${product._id}','${product.merchantId}')">Pay</button>
+                </div>
+            `).join('');
+        });
+
+        function handlePay(productId,merchantId) {
+            // Redirect to payment page with productId as query parameter
+            window.location.href = `http://127.0.0.1:5500/server/payment.html?productId=${productId}&merchantId=${merchantId}`;
+        }
+    </script>
+</body>
+</html>
