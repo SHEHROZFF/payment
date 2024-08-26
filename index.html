@@ -152,7 +152,7 @@
                     ],
                 });
                 
-                console.log("Initialization Result:", result);
+                // console.log("Initialization Result:", result);
 
                 if (isFirstTimeUser) {
                     // Show card details form for first-time users
@@ -188,7 +188,7 @@
                         encryptedCard = { encryptedCard: "storedEncryptedCardData" }; // Replace with actual stored data
                     }
                     
-                    console.log("Encrypted Card:", encryptedCard);
+                    // console.log("Encrypted Card:", encryptedCard);
 
                     var checkoutResult = await mcCheckoutService.checkoutWithNewCard({
                         "windowRef": window.open("", "popupWindow", "width=480,height=600"), // Open in popup
@@ -212,6 +212,8 @@
                     });
                     
                     console.log("Checkout Result:", checkoutResult);
+                    console.log("slh",checkCards);
+                    
                     alert("Checkout Result: " + JSON.stringify(checkoutResult));
                 });
 
