@@ -90,44 +90,27 @@
             </div>
         </div>
         <div class="form-group">
-            <!-- <button id="click-to-pay">Click to Pay</button> -->
             <src-button id="click-to-pay" card-brands="mastercard,visa"></src-button>
-
         </div>
     </div>
+
     <script type="module" src="https://src.mastercard.com/srci/integration/components/src-ui-kit/src-ui-kit.esm.js"></script>
     <script src="https://sandbox.src.mastercard.com/srci/integration/2/lib.js?srcDpaId=01b2280e-6d56-4226-a5c7-a84dce0cd8f3&locale=en_US"></script>
 
     <script>
         var isFirstTimeUser = true; // This should be dynamically determined based on your logic
-        
-        // // Listen for messages from the Mastercard iframe
-        // window.addEventListener("message", function(event) {
-        //     if (event.origin !== "https://sandbox.src.mastercard.com") {
-        //         return;
-        //     }
-
-        //     switch(event.data.message) {
-        //         case "READY":
-        //             console.log("Mastercard iframe is ready");
-        //             // Handle any additional actions when the iframe is ready
-        //             break;
-        //         default:
-        //             console.log("Unknown message received:", event.data.message);
-        //     }
-        // });
 
         // Initialize Mastercard Click to Pay
         var mcCheckoutService = new MastercardCheckoutServices();
 
         async function initializeMastercardCheckoutServices() {
             try {
-                var checkCards= await mcCheckoutService.getCards()
-                console.log("chehkha",checkCards);
+                var checkCards = await mcCheckoutService.getCards();
+                console.log("Available Cards:", checkCards);
                 
                 var result = await mcCheckoutService.init({
                     "srcDpaId": "01b2280e-6d56-4226-a5c7-a84dce0cd8f3",
-                    "checkoutExperience":"WITHIN_CHECKOUT",
+                    "checkoutExperience": "WITHIN_CHECKOUT",
                     "dpaData": {
                         "dpaName": "Registered DPA Name"
                     },
@@ -151,8 +134,6 @@
                         "visa"
                     ],
                 });
-                
-                // console.log("Initialization Result:", result);
 
                 if (isFirstTimeUser) {
                     // Show card details form for first-time users
@@ -162,6 +143,7 @@
                 // Event listener for Click to Pay button
                 document.getElementById("click-to-pay").addEventListener("click", async function() {
                     let encryptedCard;
+                    const popupWindow = window.open("", "popupWindow", "width=480,height=600"); // Open in popup
 
                     if (isFirstTimeUser) {
                         // Encrypt card details dynamically
@@ -187,34 +169,43 @@
                         // Use pre-stored encrypted card data for returning users
                         encryptedCard = { encryptedCard: "storedEncryptedCardData" }; // Replace with actual stored data
                     }
-                    
-                    // console.log("Encrypted Card:", encryptedCard);
 
-                    var checkoutResult = await mcCheckoutService.checkoutWithNewCard({
-                        "windowRef": window.open("", "popupWindow", "width=480,height=600"), // Open in popup
-                        "encryptedCard": encryptedCard.encryptedCard,
-                        "cardBrand": "mastercard",
-                        "rememberMe": "true",
-                        "consumer": {
-                            "emailAddress": "test.user@test.com",
-                            "mobileNumber": {
-                                "phoneNumber": "3470000000",
-                                "countryCode": "1"
+                    try {
+                        var checkoutResult = await mcCheckoutService.checkoutWithNewCard({
+                            "windowRef": popupWindow,
+                            "encryptedCard": encryptedCard.encryptedCard,
+                            "cardBrand": "mastercard",
+                            "rememberMe": "true",
+                            "consumer": {
+                                "emailAddress": "test.user@test.com",
+                                "mobileNumber": {
+                                    "phoneNumber": "3470000000",
+                                    "countryCode": "1"
+                                },
+                                "firstName": "Test",
+                                "lastName": "User"
                             },
-                            "firstName": "Test",
-                            "lastName": "User"  
-                        },
-                        "dpaTransactionOptions": {
-                            "authenticationPreferences": {
-                                "payloadRequested": "AUTHENTICATED"
-                            },
+                            "dpaTransactionOptions": {
+                                "authenticationPreferences": {
+                                    "payloadRequested": "AUTHENTICATED"
+                                },
+                            }
+                        });
+
+                        console.log("Checkout Result:", checkoutResult);
+                        alert("Checkout Result: " + JSON.stringify(checkoutResult));
+
+                        // Close the popup window after the alert is shown
+                        if (popupWindow && !popupWindow.closed) {
+                            popupWindow.close();
                         }
-                    });
-                    
-                    console.log("Checkout Result:", checkoutResult);
-                    console.log("slh",checkCards);
-                    
-                    alert("Checkout Result: " + JSON.stringify(checkoutResult));
+
+                    } catch (error) {
+                        console.error("Error during checkout:", error);
+                        if (popupWindow && !popupWindow.closed) {
+                            popupWindow.close(); // Ensure the popup window is closed in case of an error
+                        }
+                    }
                 });
 
             } catch (error) {
