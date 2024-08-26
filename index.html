@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Page</title>
+    <link rel="stylesheet" href="https://src.mastercard.com/srci/integration/components/src-ui-kit/src-ui-kit.css">
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -88,12 +90,15 @@
             </div>
         </div>
         <div class="form-group">
-            <button id="click-to-pay">Click to Pay</button>
+            <!-- <button id="click-to-pay">Click to Pay</button> -->
+            <src-button id="click-to-pay" card-brands="mastercard"></src-button>
+
         </div>
     </div>
-    
+    <script type="module" src="https://src.mastercard.com/srci/integration/components/src-ui-kit/src-ui-kit.esm.js"></script>
     <!-- Mastercard Click to Pay library -->
     <script src="https://sandbox.src.mastercard.com/srci/integration/2/lib.js?srcDpaId=01b2280e-6d56-4226-a5c7-a84dce0cd8f3&locale=en_US"></script>
+
 
     <script>
         var isFirstTimeUser = true; // This should be dynamically determined based on your logic
