@@ -94,7 +94,7 @@
     </div>
 
     <script type="module" src="https://src.mastercard.com/srci/integration/components/src-ui-kit/src-ui-kit.esm.js"></script>
-    <script src="https://sandbox.src.mastercard.com/srci/integration/2/lib.js?srcDpaId=01b2280e-6d56-4226-a5c7-a84dce0cd8f3&locale=en_US"></script>
+    <script src="https://sandbox.src.mastercard.com/srci/integration/2/lib.js?srcDpaId=b00f8d3a-2faa-4c84-b7dd-e5764010330c&locale=en_US"></script>
 
     <script>
         // Initialize Mastercard Click to Pay
@@ -132,7 +132,7 @@
 
                     // Pass the dynamic price to the Mastercard Checkout initialization
                     var result = await mcCheckoutService.init({
-                        srcDpaId: "01b2280e-6d56-4226-a5c7-a84dce0cd8f3",
+                        srcDpaId: "b00f8d3a-2faa-4c84-b7dd-e5764010330c",
                         checkoutExperience: "WITHIN_CHECKOUT",
                         dpaData: {
                             dpaName: "Registered DPA Name"
@@ -186,22 +186,22 @@
 
                     try {
                         var checkoutResult = await mcCheckoutService.checkoutWithNewCard({
-                            "windowRef": popupWindow,
-                            "encryptedCard": encryptedCard.encryptedCard,
-                            "cardBrand": "mastercard",
-                            "rememberMe": "true",
-                            "consumer": {
-                                "emailAddress": "test.user@test.com",
-                                "mobileNumber": {
-                                    "phoneNumber": "3470000000",
-                                    "countryCode": "1"
+                             windowRef: popupWindow,
+                            encryptedCard: encryptedCard.encryptedCard,
+                            cardBrand: "mastercard",
+                            rememberMe: "true",
+                            consumer: {
+                                emailAddress: "test.user@test.com",
+                                mobileNumber: {
+                                    phoneNumber: "3470000000",
+                                    countryCode: "1"
                                 },
-                                "firstName": "Test",
-                                "lastName": "User"
+                                firstName: "Test",
+                                lastName: "User"
                             },
-                            "dpaTransactionOptions": {
-                                "authenticationPreferences": {
-                                    "payloadRequested": "AUTHENTICATED"
+                            dpaTransactionOptions: {
+                                authenticationPreferences: {
+                                    payloadRequested: "AUTHENTICATED"
                                 },
                             }
                         });
