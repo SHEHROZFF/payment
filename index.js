@@ -31,6 +31,21 @@ const merchantSchema = new mongoose.Schema({
   products: [productSchema],
 });
 
+const checkoutSchema = new mongoose.Schema({
+  productId: String,
+  merchantId: String,
+  response: String,
+  headers:Object,
+  CheckoutResponsData:Object,
+  amount: Number,
+  currency: String,
+  status: String,
+  customerEmail: String,
+  customerPhone: String,
+  createdAt: { type: Date, default: Date.now }
+});
+const Checkout = mongoose.model('Checkout', checkoutSchema);
+
 const Merchant = mongoose.model('Merchant', merchantSchema);
 
 // API Endpoints
@@ -129,6 +144,29 @@ app.get('/api/products/:productId', async (req, res) => {
     }
 });
 
+app.post('/api/checkout', async (req, res) => {
+  try {
+      const { productId, merchantId, response,headers,CheckoutResponsData, amount, currency, status, customerEmail, customerPhone } = req.body;
+
+      const newCheckout = new Checkout({
+          productId,
+          merchantId,
+          response,
+          headers,
+          CheckoutResponsData,
+          amount,
+          currency,
+          status,
+          customerEmail,
+          customerPhone
+      });
+
+      await newCheckout.save();
+      res.status(201).json({ message: 'Checkout data saved successfully', checkout: newCheckout });
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to save checkout data' });
+  }
+});
 
 
 // Serve a simple HTML interface for testing
