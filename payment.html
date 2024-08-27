@@ -207,7 +207,7 @@
                         });
 
                         console.log("Checkout Result:", checkoutResult);
-                        alert("CHECKOUT RESULT SAVE TO DATABASE SUCESSFULLY");
+                        // alert("CHECKOUT RESULT SAVE TO DATABASE SUCESSFULLY");
 
                         // Save checkout data if the action code is complete
                         console.log(checkoutResult.checkoutActionCode);
@@ -237,7 +237,7 @@
                             }
 
                             const result = await response.json();
-                            console.log('Checkout data saved:', result);
+                            alert('Checkout data saved:', result);
                         }
 
                         // Close the popup window after the alert is shown
