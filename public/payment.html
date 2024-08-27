@@ -186,22 +186,22 @@
 
                     try {
                         var checkoutResult = await mcCheckoutService.checkoutWithNewCard({
-                            windowRef: popupWindow,
-                            encryptedCard: encryptedCard.encryptedCard,
-                            cardBrand: "mastercard",
-                            rememberMe: "false",
-                            consumer: {
-                                emailAddress: "test.user@test.com",
-                                mobileNumber: {
-                                    phoneNumber: "3470000000",
-                                    countryCode: "1"
+                            "windowRef": popupWindow,
+                            "encryptedCard": encryptedCard.encryptedCard,
+                            "cardBrand": "mastercard",
+                            "rememberMe": "true",
+                            "consumer": {
+                                "emailAddress": "test.user@test.com",
+                                "mobileNumber": {
+                                    "phoneNumber": "3470000000",
+                                    "countryCode": "1"
                                 },
-                                firstName: "Test",
-                                lastName: "User"
+                                "firstName": "Test",
+                                "lastName": "User"
                             },
-                            dpaTransactionOptions: {
-                                authenticationPreferences: {
-                                    payloadRequested: "AUTHENTICATED"
+                            "dpaTransactionOptions": {
+                                "authenticationPreferences": {
+                                    "payloadRequested": "AUTHENTICATED"
                                 },
                             }
                         });
