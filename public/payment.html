@@ -186,25 +186,26 @@
 
                     try {
                         var checkoutResult = await mcCheckoutService.checkoutWithNewCard({
-                            "windowRef": popupWindow,
-                            "encryptedCard": encryptedCard.encryptedCard,
-                            "cardBrand": "mastercard",
-                            "rememberMe": "true",
-                            "consumer": {
-                                "emailAddress": `${document.getElementById("consumer-email").value}`,
-                                "mobileNumber": {
-                                    "phoneNumber": `${document.getElementById("consumer-phone").value}`,
-                                    "countryCode": "1"
+                            windowRef: popupWindow,
+                            encryptedCard: encryptedCard.encryptedCard,
+                            cardBrand: "mastercard",
+                            rememberMe: "true",
+                            consumer: {
+                                emailAddress: "test.user@test.com",
+                                mobileNumber: {
+                                    phoneNumber: "3470000000",
+                                    countryCode: "1"
                                 },
-                                "firstName": `${document.getElementById("consumer-first-name").value}`,
-                                "lastName": `${document.getElementById("consumer-last-name").value}`
+                                firstName: "Test",
+                                lastName: "User"
                             },
-                            "dpaTransactionOptions": {
-                                "authenticationPreferences": {
-                                    "payloadRequested": "AUTHENTICATED"
+                            dpaTransactionOptions: {
+                                authenticationPreferences: {
+                                    payloadRequested: "AUTHENTICATED"
                                 },
                             }
                         });
+
 
                         console.log("Checkout Result:", checkoutResult);
                         // alert("CHECKOUT RESULT SAVE TO DATABASE SUCESSFULLY");
